@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-theme-colored cursor-pointer">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav m-b-n-xs">
+            <li class="nav-item">
+                <img width="50px" alt="Logo" routerLink="/home" src="../../assets/img/logo.jpg">
+            </li>
+        </ul>
+        <ul class="navbar-nav nav_style m-l-md">
+            <li class="nav-item">
+                <a class="nav-link text-white" routerLink="/home">HOME <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" routerLink="/user">USER</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" routerLink="/project">PROJECT</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" routerLink="/item">ITEMS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" routerLink="/search">SEARCH</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav nav_style m-l-md menu mr-5">
+            <li class="nav-item dropdown m-t-n-xs">
+                <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action text-white">
+                    <span class="profile_view text-capitalize">
+                        {{userDetails?.firstName| slice :0:1}}
+                    </span>
+                    <span class="ml-2 text-capitalize">
+                        {{userDetails?.firstName}} {{userDetails?.lastName}}
+                    </span>
+                </a>
+                <ul class="dropdown-menu" style="width: 205px;">
+                    <div class="col-lg-12">
+                        <div class="block">
+                            <div class="circle">
+                                <p> {{userDetails?.firstName| slice :0:1}} </p>
+                            </div>
+                        </div>
+                        <div class="userName_text">{{userDetails?.firstName}} {{userDetails?.lastName}} </div>
+                        <div class="text-center text-success" style="font-weight: 500;">{{userDetails?.email}} </div>
+                    </div>
+                    <li class="divider dropdown-divider"></li>
+                    <li>
+                        <div class="text-center mb-2">
+                            <button type="button" class="btn btn-outline-primary" (click)="signOut()">
+                                <span class="font-bold font_15"> Sign out </span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

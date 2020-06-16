@@ -1,0 +1,190 @@
+<div class="col-lg-12 border-bottom">
+    <div class="hed_title">Dashboard</div>
+    <div class="font_10 mb-1"> Home / Dashboard </div>
+</div>
+
+<div class="row wrapper" style="background: #f3f3f3;">
+    <div class="col-lg-12 wrapper-contet mt-3 mb-3">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body bg-success">
+                        <div class="row">
+                            <div class="col-lg-3"><i class="fa fa-users fa-5x"></i></div>
+                            <div class="col-lg-9 text-right">
+                                <div class="huge ng-binding" *ngIf="userCount">{{userCount?.count}}</div>
+                                <div class="huge ng-binding" *ngIf="!userCount">0</div>
+                                <div>Total Users</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer footer_text_color">
+                        <a routerLink="/user">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body bg-warning">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <i class="fa fa-cogs fa-5x"></i>
+                            </div>
+                            <div class="col-lg-9 text-right">
+                                <div class="huge ng-binding" *ngIf="projectCount">{{projectCount?.count}}</div>
+                                <div class="huge ng-binding" *ngIf="!projectCount">0</div>
+                                <div>Total Projects</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer footer_text_color">
+                        <a routerLink="/project">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body bg-danger">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <i class="fa fa-sitemap fa-5x"></i>
+                            </div>
+                            <div class="col-lg-9 text-right">
+                                <div class="huge ng-binding" *ngIf="itemCount">{{itemCount?.count}}</div>
+                                <div class="huge ng-binding" *ngIf="!itemCount">0</div>
+                                <div>Total Items</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer footer_text_color">
+                        <a routerLink="/item">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="pull-left">
+                            <i class="fa fa-cogs mr-2"></i>
+                            <span style="font-size: medium;font-weight: 600;">Projects</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 height_216">
+                        <table class="table mb-0" *ngIf="projectRecords">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Project Name</th>
+                                    <th>Manager Name</th>
+                                    <th>Customer Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let project of projectRecords| slice :0:5; let i=index">
+                                    <td>{{project.projectId}} </td>
+                                    <td>{{project.projectName | slice :0:18}}</td>
+                                    <td> {{project.managerName| slice :0:15}} </td>
+                                    <td> {{project.custodianName | slice :0:15}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center mt-5" *ngIf="!projectRecords">
+                            <span>No record found ...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="pull-left">
+                            <i class="fa fa-sitemap mr-2"></i>
+                            <span style="font-size: medium;font-weight: 600;">Items</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 height_216">
+                        <table class="table mb-0" *ngIf="itemRecords">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Item Name</th>
+                                    <th>Item Quantity</th>
+                                    <th>Project Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of itemRecords| slice :0:5; let i=index">
+                                    <td>{{item.itemId}} </td>
+                                    <td>{{item.itemName | slice :0:18}}</td>
+                                    <td> {{item.itemQuantity| slice :0:15}} </td>
+                                    <td> {{item?.projectId?.projectName | slice :0:15}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center mt-5" *ngIf="!itemRecords">
+                            <span>No record found ...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-12 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="pull-left">
+                            <i class="fa fa-users mr-2"></i>
+                            <span style="font-size: medium;font-weight: 600;">Users</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 height_216">
+                        <table class="table mb-0" *ngIf="userRecord">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Firstname</th>
+                                    <th>Lastname</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Phone No.</th>
+                                    <th>Gender</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of userRecord | slice :0:5 ; let i=index">
+                                    <td>{{i+1}} </td>
+                                    <td>{{user.firstName}}</td>
+                                    <td> {{user.lastName}} </td>
+                                    <td> {{user.username}} </td>
+                                    <td> {{user.email}} </td>
+                                    <td> {{user.phone}} </td>
+                                    <td> {{user.gender}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center mt-5" *ngIf="!userRecord">
+                            <span>No record found ...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

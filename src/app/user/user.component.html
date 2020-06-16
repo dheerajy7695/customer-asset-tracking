@@ -1,0 +1,364 @@
+<div class="row">
+    <div class="col-lg-12 border">
+        <div class="bg-light text-dark h-55">
+            <div class="card-body">
+                <div class="row m-t-n-xs">
+                    <div class="col-sm-9">
+                        <h4 class="text-primary">Users</h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="btn-group btn-group-sm pull-right">
+                            <button type="button" class="btn btn-outline-info mr-1"
+                                (click)="openCreateModal(template)">Create User
+                            </button>
+                            <button class="btn btn-outline-info mr-1" (click)="gridListView('List')"
+                                [ngClass]="{'active':listGridView=='List'}">
+                                <i class="fa fa-bars"></i> List
+                            </button>
+                            <button class="btn btn-outline-info mr-1" (click)="gridListView('Grid')"
+                                [ngClass]="{'active':listGridView=='Grid'}">
+                                <i class="fa fa-th-large"></i> Grid
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 wrapper m-t-sm" *ngIf="userList">
+        <div class="row" *ngIf="listGridView=='Grid'">
+            <div class="col-sm-3 mt-2 pb-10" *ngFor="let user of userList; let i=index">
+                <div class="card">
+                    <div class="card-header card_hed_bg p-8 bg-primary_1 font-16">
+                        {{user?.firstName | titlecase}} {{user?.lastName | titlecase}}
+                    </div>
+                    <div class="card-body p-xs bg-blue-hexa">
+                        <span>
+                            <td class="hed_tag font-bold">FirstName</td> : <td>{{user?.firstName}}</td>
+                        </span><br>
+                        <span>
+                            <td class="hed_tag font-bold">LastName</td> : <td>{{user?.lastName}}</td>
+                        </span><br>
+                        <span>
+                            <td class="hed_tag font-bold">Username</td> : <td>{{user?.username}}</td>
+                        </span><br>
+                        <span>
+                            <td class="hed_tag font-bold">Phone</td> : <td>{{user?.phone}}</td>
+                        </span><br>
+                        <span>
+                            <td class="hed_tag font-bold">Email</td> : <td>{{user?.email}}</td>
+                        </span>
+                    </div>
+                    <div class="card-footer p-8 bg_card_footer_user p-xs">
+                        <div class="row">
+                            <div class="col-lg-8"> <span>{{user.created|date}}</span> </div>
+                            <div class="col-lg-4">
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-primary mr-1 pull-right"
+                                        [disabled]="loginUser===user.username" (click)="editUserModal(user,template)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary mr-1"
+                                        [disabled]="loginUser===user.username" data-toggle="modal"
+                                        data-target="#exampleModal" (click)="openDeleteModel(user,deleteTemplate)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary mr-1"
+                                        (click)="userInfoModal(user,infoTemplate)">
+                                        <i class="fa fa-info-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="listGridView=='List'">
+            <div class="col-lg-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of userList">
+                            <td>{{user.username}}</td>
+                            <td>{{user.firstName}}</td>
+                            <td>{{user.lastName}}</td>
+                            <td>{{user.email}}</td>
+                            <td>{{user.gender}}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-info mr-1 pull-right"
+                                        [disabled]="loginUser===user.username" (click)="editUserModal(user,template)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info mr-1" [disabled]="loginUser===user.username"
+                                        (click)="openDeleteModel(user,deleteTemplate)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info mr-1"
+                                        (click)="userInfoModal(user,infoTemplate)">
+                                        <i class="fa fa-info-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 text-center mt-5" *ngIf="userError"> {{userError}} </div>
+</div>
+
+<!-- Create and Update the user modal -->
+<ng-template #template>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16" *ngIf="!updateUserData?._id">Create User</h4>
+        <h4 class="modal-title pull-left font-bold text-black font-16" *ngIf="updateUserData?._id">Update User</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="col-lg-12">
+            <form [formGroup]="userForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" formControlName="firstName" class="form-control"
+                                placeholder="Enter first name "
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('firstName').errors) || userForm.get('firstName').errors && (userForm.get('firstName').touched || userForm.get('firstName').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="(submitted && userForm.get('firstName').errors) ||(userForm.get('firstName').errors && (userForm.get('firstName').touched || userForm.get('firstName').dirty))">
+                                <span *ngIf="userForm.get('firstName').errors.required">
+                                    First Name is required
+                                </span>
+                                <span *ngIf="userForm.get('firstName').errors.minlength">
+                                    Your First Name must be at least 5 characters long.
+                                </span>
+                                <span *ngIf="userForm.get('firstName').errors.maxlength">
+                                    Your First Name cannot exceed 25 characters.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">User Name *</label>
+                            <input type="text" class="form-control" formControlName="username"
+                                placeholder="Enter username" value=""
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('username').errors) || userForm.get('username').errors && (userForm.get('username').touched || userForm.get('username').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="((submitted && userForm.get('username').errors) || userForm.get('username').errors && (userForm.get('username').touched || userForm.get('username').dirty))">
+                                <span *ngIf="userForm.get('username').errors?.required">
+                                    Username is required
+                                </span>
+                                <span *ngIf="userForm.get('username').errors?.minlength">
+                                    Username must be at least 5 characters long.
+                                </span>
+                                <span *ngIf="userForm.get('username').errors?.maxlength">
+                                    Username cannot exceed 25 characters.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group" *ngIf="!updateUserData?._id">
+                            <label for="password">Password *</label>
+                            <input type="text" class="form-control" formControlName="password"
+                                placeholder="Enter password" value=""
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('password').errors) || userForm.get('password').errors && (userForm.get('password').touched || userForm.get('password').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="((submitted && userForm.get('password').errors) || userForm.get('password').errors && (userForm.get('password').touched || userForm.get('password').dirty))">
+                                <span *ngIf="userForm.get('password').errors?.required">
+                                    Password is required
+                                </span>
+                                <span *ngIf="userForm.get('password').errors?.minlength">
+                                    Password must be at least 5 characters long.
+                                </span>
+                                <span *ngIf="userForm.get('password').errors?.maxlength">
+                                    Password cannot exceed 25 characters.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="securityKey">Security Key *</label>
+                            <select class="form-control" formControlName="securityKey" id="secQutn"
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('securityKey').errors) || userForm.get('securityKey').errors && (userForm.get('securityKey').touched || userForm.get('securityKey').dirty)) }">
+                                <option value="" [selected]=true [disabled]="true">Please select your Sequrity
+                                    Question</option>
+                                <option [value]="secQutn.name" *ngFor="let secQutn of securityQuestion">
+                                    {{secQutn.name}}
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" *ngIf="submitted && userForm.get('securityKey').errors">
+                                <span *ngIf="userForm.get('securityKey').errors.required">
+                                    Field is required
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone *</label>
+                            <input type="text" class="form-control" formControlName="phone"
+                                placeholder="Enter your phone" value="" maxlength="10"
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('phone').errors) || userForm.get('phone').errors && (userForm.get('phone').touched || userForm.get('phone').dirty)) }" />
+                            <div class=" invalid-feedback"
+                                *ngIf="((submitted && userForm.get('phone').errors) || userForm.get('phone').errors && (userForm.get('phone').touched || userForm.get('phone').dirty))">
+                                <span *ngIf="userForm.get('phone').errors?.required"> Phone is required
+                                </span>
+                                <span *ngIf="userForm.get('phone').errors?.pattern"> Only Numbers are allowed
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" class="form-control" formControlName="lastName"
+                                placeholder="Enter lsst name" value=""
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('lastName').errors) || userForm.get('lastName').errors && (userForm.get('lastName').touched || userForm.get('lastName').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="(submitted && userForm.get('lastName').errors) || ((userForm.get('lastName').errors && (userForm.get('lastName').touched) || userForm.get('lastName').dirty))">
+                                <span *ngIf="userForm.get('lastName').errors?.required">
+                                    Last Name is required
+                                </span>
+                                <span *ngIf="userForm.get('lastName').errors?.minlength">
+                                    Your Last Name must be at least 5 characters long.
+                                </span>
+                                <span *ngIf="userForm.get('lastName').errors?.maxlength">
+                                    Your Last Name cannot exceed 25 characters.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="text" class="form-control" formControlName="email"
+                                placeholder="Enter your email" value=""
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('email').errors) || userForm.get('email').errors && (userForm.get('email').touched || userForm.get('email').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="((submitted && userForm.get('email').errors) || userForm.get('email').errors && (userForm.get('email').touched || userForm.get('email').dirty))">
+                                <span *ngIf="userForm.get('email').errors?.required">
+                                    Email is required
+                                </span>
+                                <span *ngIf="userForm.get('email').errors?.email">
+                                    Email must be a valid email address
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group" *ngIf="!updateUserData?._id">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <input type="text" class="form-control" formControlName="confirmPassword"
+                                placeholder="Enter confirm password " value=""
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('confirmPassword').errors) || userForm.get('confirmPassword').errors && (userForm.get('confirmPassword').touched || userForm.get('confirmPassword').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="((submitted && userForm.get('confirmPassword').errors) || userForm.get('confirmPassword').errors && (userForm.get('confirmPassword').touched || userForm.get('confirmPassword').dirty))">
+                                <span *ngIf="userForm.get('confirmPassword').errors?.required">
+                                    Confirm Password is required
+                                </span>
+                                <span *ngIf="userForm.get('confirmPassword').errors?.mustMatch">Passwords must
+                                    match</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="securityValue">Security Value *</label>
+                            <input type="text" class="form-control" formControlName="securityValue"
+                                placeholder="Enter your answer" value=""
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('securityValue').errors) || userForm.get('securityValue').errors && (userForm.get('securityValue').touched || userForm.get('securityValue').dirty)) }" />
+                            <div class="invalid-feedback"
+                                *ngIf="((submitted && userForm.get('securityValue').errors) || userForm.get('securityValue').errors && (userForm.get('securityValue').touched || userForm.get('securityValue').dirty))">
+                                <span *ngIf="userForm.get('securityValue').errors?.required">
+                                    Field is required
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender *</label>
+                            <select class="form-control" formControlName="gender" id="data"
+                                [ngClass]="{ 'is-invalid': ((submitted && userForm.get('gender').errors) || userForm.get('gender').errors && (userForm.get('gender').touched || userForm.get('gender').dirty)) }">
+                                <option value="" [selected]=true [disabled]="true">Please select your Gender </option>
+                                <option [value]="data.name" *ngFor="let data of genderData">{{data.name}}
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" *ngIf="submitted && userForm.get('gender').errors">
+                                <span *ngIf="userForm.get('gender').errors.required"> Gender is required </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="error-feed mt-1 ml-3" *ngIf="userError"> {{userError.error.message}} </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="createUser()"
+            *ngIf="!updateUserData?._id">Create</button>
+        <button type="button" class="btn btn-success" (click)="UpdateUser()" *ngIf="updateUserData?._id">Update</button>
+        <button type="button" class="btn btn-info" (click)="closeUserModal()">Close</button>
+    </div>
+</ng-template>
+
+<!-- Delete User Modal Popup -->
+<ng-template #deleteTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16">Delete User</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <h3> Are you sure want to delete the <span class="text-warning"> {{deleteUserData?.firstName}} </span>
+            User ? </h3>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="deleteUser(deleteUserData)">Yes</button>
+        <button type="button" class="btn btn-info" (click)="closeUserModal()">No</button>
+    </div>
+</ng-template>
+
+<!-- User Details Modal Popup -->
+<ng-template #infoTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16">User Details</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body bg-blue-hexa">
+        <div class="">
+            <div>
+                <span class="text-success">First Name</span> :
+                <small class="font-13">{{userDetails?.firstName}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Last Name</span> :
+                    <small class="font-13">{{userDetails?.lastName}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Username </span> :
+                <small class="font-13">{{userDetails?.username}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Email</span> :
+                    <small class="font-13">{{userDetails?.email}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Phone</span> :
+                <small class="font-13">{{userDetails?.phone}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Gender</span> :
+                    <small class="font-13">{{userDetails?.gender}}</small>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-info" (click)="closeUserModal()">Close</button>
+    </div>
+</ng-template>

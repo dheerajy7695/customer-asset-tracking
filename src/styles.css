@@ -1,1 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+@import "~bootstrap/dist/css/bootstrap.css";
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+/* @import "~@ng-select/ng-select/themes/material.theme.css"; */
+
+.error_msg {
+    color: #dc3545;
+    font-size: 12px;
+}
+
+/*Date picker container*/
+ bs-datepicker-container { z-index: 3000 !important; }
+
+.font-12{
+     font-size: 12px;
+}
+
+.font-13{
+    font-size: 13px;
+}
+.h-40{
+    height: 40px;
+}

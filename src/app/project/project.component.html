@@ -1,0 +1,452 @@
+<div class="row">
+    <div class="col-lg-12 border bg-light text-dark h-55">
+        <div class="card-body">
+            <div class="row m-t-n-xs">
+                <div class="col-sm-7">
+                    <h4 class="text-primary">Project</h4>
+                </div>
+                <div class="col-sm-5">
+                    <div class="btn-group btn-group-sm pull-right">
+                        <button type="button" class="btn btn-outline-info mr-1"
+                            (click)="openCreateProjectModel(template)">Create Project
+                        </button>
+                        <button class="btn btn-outline-info mr-1" (click)="gridListView('List')"
+                            [ngClass]="{'active':listGridView=='List'}">
+                            <i class="fa fa-bars"></i> List
+                        </button>
+                        <button class="btn btn-outline-info mr-1" (click)="gridListView('Grid')"
+                            [ngClass]="{'active':listGridView=='Grid'}">
+                            <i class="fa fa-th-large"></i> Grid
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 wrapper" *ngIf="projectList">
+        <div class="row wrapper-contet" *ngIf="listGridView=='Grid'">
+            <div class="col-sm-3 m-t-sm pb-10" *ngFor="let project of projectList; let i=index">
+                <div class="card">
+                    <div class="card-header card_hed_bg p-xs bg_light_blue font-16">
+                        <span class="text-white">{{project.projectId | titlecase}} - {{project.projectName | titlecase}}
+                        </span>
+                    </div>
+                    <div class="card-body p-xs bg-blue-hexa">
+                        <span>
+                            <td class="text-warning">ManagerId</td> :
+                            <td class="font-13"> {{project?.managerId}} </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">Manager Name</td> :
+                            <td class="font-13"> {{project?.managerName}} </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">CustodianId</td> :
+                            <td class="font-13"> {{project?.custodianId}} </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">Custodian Name</td> :
+                            <td class="font-13"> {{project?.custodianName}} </td>
+                        </span><br>
+                        <div class="font-12 h-40 m-t-xxs"> {{project.comments | slice:0:110}}... </div>
+                    </div>
+                    <div class="card-footer bg_card_footer_project" style="padding: 7px 7px 1px 8px;">
+                        <div class="m-t-n-xs">
+                            <span>
+                                <td class="font-bold">Created</td> : <td>{{project.created|date}}</td><br>
+                                <td class="font-bold">Updated</td> : <td>{{project.updated|date}}</td>
+                            </span>
+                            <div class="btn-group btn-group-sm pull-right m-t-n">
+                                <button type="button" class="btn btn-success mr-1" data-toggle="tooltip" title="Edit"
+                                    data-placement="bottom" (click)="editProjectModal(project,template)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-success mr-1" data-toggle="tooltip" title="Delete"
+                                    data-placement="bottom" (click)="deleteProjectModal(project,template1)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button type="button" class="btn btn-success mr-1" data-toggle="tooltip" title="Details"
+                                    data-placement="bottom" (click)="projectInfoModal(project,infoTemplate)">
+                                    <i class="fa fa-info-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row wrapper-contet" *ngIf="listGridView=='List'">
+            <div class="col-lg-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ProjectId</th>
+                            <th>projectName</th>
+                            <th>ManagerId</th>
+                            <th>Manager Name</th>
+                            <th>CustodianId</th>
+                            <th>Custodian Name</th>
+                            <th>Manager Start Date</th>
+                            <th>Custodian Date</th>
+                            <th>Ship Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let project of projectList">
+                            <td>{{project.projectId}}</td>
+                            <td>{{project.projectName}}</td>
+                            <td>{{project.managerId}}</td>
+                            <td>{{project.managerName}}</td>
+                            <td>{{project.custodianId}}</td>
+                            <td>{{project.custodianName}}</td>
+                            <td>{{project.managerStartDate |date}}</td>
+                            <td>{{project.custodianDate |date}}</td>
+                            <td>{{project.shipDate |date}}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-info mr-1 pull-right"
+                                        (click)="editProjectModal(project,template)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info mr-1"
+                                        (click)="deleteProjectModal(project,template1)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info mr-1"
+                                        (click)="projectInfoModal(project,infoTemplate)">
+                                        <i class="fa fa-info-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 text-center mt-5" *ngIf="projectList?.length===0">
+        {{getErrorMsg}}
+    </div>
+</div>
+
+<!-- Create And Update Project Modal Popup -->
+<ng-template #template>
+    <div class="modal-header">
+        <h4 *ngIf="!updateProjectData?._id" class="modal-title pull-left font-bold text-black font-16">Create Project
+        </h4>
+        <h4 *ngIf="updateProjectData?._id" class="modal-title pull-left font-bold text-black font-16">Update Project
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="card-body p-xs">
+                <div class="col-lg-12 m-b-n-sm">
+                    <form [formGroup]="projectForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="projectId">ProjectId *</label>
+                                    <input type="text" formControlName="projectId" class="form-control"
+                                        placeholder="Enter ProjectId "
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('projectId').errors) || projectForm.get('projectId').errors && (projectForm.get('projectId').touched || projectForm.get('projectId').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && projectForm.get('projectId').errors) ||(projectForm.get('projectId').errors && (projectForm.get('projectId').touched || projectForm.get('projectId').dirty))">
+                                        <span *ngIf="projectForm.get('projectId').errors.required">
+                                            ProjectId is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('projectId').errors.minlength">
+                                            ProjectId must be at least 3 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('projectId').errors.maxlength">
+                                            ProjectId cannot exceed 10 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="projectName">Project Name *</label>
+                                    <input type="text" class="form-control" formControlName="projectName"
+                                        placeholder="Enter Project Name ..." value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('projectName').errors) || projectForm.get('projectName').errors && (projectForm.get('projectName').touched || projectForm.get('projectName').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && projectForm.get('projectName').errors) || ((projectForm.get('projectName').errors && (projectForm.get('projectName').touched) || projectForm.get('projectName').dirty))">
+                                        <span *ngIf="projectForm.get('projectName').errors?.required">
+                                            Project Name is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('projectName').errors?.minlength">
+                                            Project Name must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('projectName').errors?.maxlength">
+                                            Project Name cannot exceed 50 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="managerId">ManagerId *</label>
+                                    <input type="text" class="form-control" formControlName="managerId"
+                                        placeholder="Enter ManagerId ..." value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('managerId').errors) || projectForm.get('managerId').errors && (projectForm.get('managerId').touched || projectForm.get('managerId').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && projectForm.get('managerId').errors) || projectForm.get('managerId').errors && (projectForm.get('managerId').touched || projectForm.get('managerId').dirty))">
+                                        <span *ngIf="projectForm.get('managerId').errors?.required">
+                                            ManagerId is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('managerId').errors?.minlength">
+                                            ManagerId must be at least 3 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('managerId').errors?.maxlength">
+                                            ManagerId cannot exceed 10 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="managerName">Manager Name *</label>
+                                    <input type="text" class="form-control" formControlName="managerName"
+                                        placeholder="Enter Manager Name ..." value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('managerName').errors) || projectForm.get('managerName').errors && (projectForm.get('managerName').touched || projectForm.get('managerName').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && projectForm.get('managerName').errors) || projectForm.get('managerName').errors && (projectForm.get('managerName').touched || projectForm.get('managerName').dirty))">
+                                        <span *ngIf="projectForm.get('managerName').errors?.required">
+                                            Date is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('managerName').errors?.minlength">
+                                            Password must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('managerName').errors?.maxlength">
+                                            Password cannot exceed 50 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="managerStartDate">Manager Start Date *</label>
+                                    <div class="input-container">
+                                        <input type="text" class="form-control" bsDatepicker
+                                            formControlName="managerStartDate" placeholder="yyyy-mm-dd"
+                                            #d4="bsDatepicker"
+                                            [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('managerStartDate').errors) || projectForm.get('managerStartDate').errors && (projectForm.get('managerStartDate').touched || projectForm.get('managerStartDate').dirty)) }" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary fa fa-calendar"
+                                                (click)="d4.toggle()" type="button">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="error_msg"
+                                        *ngIf="((submitted && projectForm.get('managerStartDate').errors) || projectForm.get('managerStartDate').errors && (projectForm.get('managerStartDate').touched || projectForm.get('managerStartDate').dirty))">
+                                        <span *ngIf="projectForm.get('managerStartDate').errors?.required">
+                                            Manager Start Date is required
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="custodianId">CustodianId *</label>
+                                    <input type="text" formControlName="custodianId" class="form-control"
+                                        placeholder="Enter CustodianId ..."
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('custodianId').errors) || projectForm.get('custodianId').errors && (projectForm.get('custodianId').touched || projectForm.get('custodianId').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && projectForm.get('custodianId').errors) ||(projectForm.get('custodianId').errors && (projectForm.get('custodianId').touched || projectForm.get('custodianId').dirty))">
+                                        <span *ngIf="projectForm.get('custodianId').errors.required">
+                                            CustodianId is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('custodianId').errors.minlength">
+                                            CustodianId must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('custodianId').errors.maxlength">
+                                            CustodianId cannot exceed 15 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="custodianName">Cutodian Name *</label>
+                                    <input type="text" class="form-control" formControlName="custodianName"
+                                        placeholder="Enter Custodian Name ..." value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('custodianName').errors) || projectForm.get('custodianName').errors && (projectForm.get('custodianName').touched || projectForm.get('custodianName').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && projectForm.get('custodianName').errors) || ((projectForm.get('custodianName').errors && (projectForm.get('custodianName').touched) || projectForm.get('custodianName').dirty))">
+                                        <span *ngIf="projectForm.get('custodianName').errors?.required">
+                                            Custodian Name is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('custodianName').errors?.minlength">
+                                            Custodian Name must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('custodianName').errors?.maxlength">
+                                            Custodian Name cannot exceed 50 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="custodianDate">CustodianDate*</label>
+                                    <div class="input-container">
+                                        <input type="text" class="form-control" bsDatepicker
+                                            formControlName="custodianDate" placeholder="yyyy-mm-dd" #d1="bsDatepicker"
+                                            [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('custodianDate').errors) || projectForm.get('custodianDate').errors && (projectForm.get('custodianDate').touched || projectForm.get('custodianDate').dirty)) }" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary fa fa-calendar"
+                                                (click)="d1.toggle()" type="button">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="error_msg m-t-n-sm"
+                                        *ngIf="((submitted && projectForm.get('custodianDate').errors) || projectForm.get('custodianDate').errors && (projectForm.get('custodianDate').touched || projectForm.get('custodianDate').dirty))">
+                                        <span *ngIf="projectForm.get('custodianDate').errors?.required">
+                                            Cutodian Date is required
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shipDate">ShipDate*</label>
+                                    <div class="input-container">
+                                        <input type="text" class="form-control" bsDatepicker formControlName="shipDate"
+                                            placeholder="yyyy-mm-dd" #d2="bsDatepicker"
+                                            [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('shipDate').errors) || projectForm.get('shipDate').errors && (projectForm.get('shipDate').touched || projectForm.get('shipDate').dirty)) }" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary fa fa-calendar"
+                                                (click)="d2.toggle()" type="button">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="error_msg m-t-n-sm"
+                                        *ngIf="((submitted && projectForm.get('shipDate').errors) || projectForm.get('shipDate').errors && (projectForm.get('shipDate').touched || projectForm.get('shipDate').dirty))">
+                                        <span *ngIf="projectForm.get('shipDate').errors?.required">
+                                            Ship Date is required
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiryDate">Expiry Date*</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" bsDatepicker
+                                            formControlName="expiryDate" placeholder="yyyy-mm-dd" #d3="bsDatepicker"
+                                            [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('expiryDate').errors) || projectForm.get('expiryDate').errors && (projectForm.get('expiryDate').touched || projectForm.get('expiryDate').dirty)) }" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary fa fa-calendar"
+                                                (click)="d3.toggle()" type="button">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="error_msg"
+                                        *ngIf="((submitted && projectForm.get('expiryDate').errors) || projectForm.get('expiryDate').errors && (projectForm.get('expiryDate').touched || projectForm.get('expiryDate').dirty))">
+                                        <span *ngIf="projectForm.get('expiryDate').errors?.required">
+                                            Expiry Date is required
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <textarea class="form-control" id="validationTextarea" formControlName="comments"
+                                        placeholder="Please comments here something..."
+                                        [ngClass]="{ 'is-invalid': ((submitted && projectForm.get('comments').errors) || projectForm.get('comments').errors && (projectForm.get('comments').touched || projectForm.get('comments').dirty)) }"></textarea>
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && projectForm.get('comments').errors) ||(projectForm.get('comments').errors && (projectForm.get('comments').touched || projectForm.get('comments').dirty))">
+                                        <span *ngIf="projectForm.get('comments').errors.required">
+                                            Comment is required
+                                        </span>
+                                        <span *ngIf="projectForm.get('comments').errors.minlength">
+                                            Comment must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="projectForm.get('comments').errors?.maxlength">
+                                            Comment cannot exceed 150 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row pull-center">
+            <span class="text-warning text-center"> {{projectError}} </span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" *ngIf="!updateProjectData?._id"
+            (click)="createProject()">Create</button>
+        <button type="button" class="btn btn-success" *ngIf="updateProjectData?._id"
+            (click)="updateProject()">Update</button>
+        <button type="button" class="btn btn-info" (click)="closeModal()">Close</button>
+    </div>
+</ng-template>
+
+
+<!-- Delete Project Modal Popup -->
+<ng-template #template1>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16">Delete Project</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <h3> Are you sure want to delete the <span class="text-warning"> {{deleteProjectData.projectName}} </span>
+            Project ? </h3>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="deleteProject(deleteProjectData)">Yes</button>
+        <button type="button" class="btn btn-info" (click)="closeModal()">No</button>
+    </div>
+</ng-template>
+
+<!-- Project Details Modal Popup -->
+<ng-template #infoTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16">Project Details</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body bg-blue-hexa">
+        <div class="">
+            <div>
+                <span class="text-success">Project Id</span> :
+                <small class="font-13">{{projectDetails?.projectId}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Project Name</span> :
+                    <small class="font-13">{{projectDetails?.projectName}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Manager Id</span> :
+                <small class="font-13">{{projectDetails?.managerId}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Manager Name</span> :
+                    <small class="font-13">{{projectDetails?.managerName}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Customer Id</span> :
+                <small class="font-13">{{projectDetails?.custodianId}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Customer Name</span> :
+                    <small class="font-13">{{projectDetails?.custodianName}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Manager Start Date</span> :
+                <small class="font-13">{{projectDetails?.managerStartDate|date}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Customer Date</span> :
+                    <small class="font-13">{{projectDetails?.custodianDate|date}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Ship Date</span> :
+                <small class="font-13">{{projectDetails?.shipDate|date}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Expiry Name</span> :
+                    <small class="font-13">{{projectDetails?.expiryDate |date}}</small>
+                </span>
+            </div>
+            <div class="font-12 h-40 m-t-sm"> {{projectDetails?.comments}}</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-info" (click)="closeModal()">Close</button>
+    </div>
+</ng-template>

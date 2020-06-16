@@ -1,0 +1,300 @@
+<div class="row">
+    <div class="col-lg-12 border bg-light text-dark h-55">
+        <div class="card-body">
+            <div class="row m-t-n-xs">
+                <div class="col-sm-7">
+                    <h4 class="text-primary">Items</h4>
+                </div>
+                <div class="col-sm-5">
+                    <div class="btn-group btn-group-sm pull-right">
+                        <button type="button" class="btn btn-outline-info mr-1"
+                            (click)="openCreateItemModel(template)">Create Item
+                        </button>
+                        <button class="btn btn-outline-info mr-1" (click)="gridListView('List')"
+                            [ngClass]="{'active':listGridView=='List'}">
+                            <i class="fa fa-bars"></i> List
+                        </button>
+                        <button class="btn btn-outline-info mr-1" (click)="gridListView('Grid')"
+                            [ngClass]="{'active':listGridView=='Grid'}">
+                            <i class="fa fa-th-large"></i> Grid
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 wrapper" *ngIf="itemList">
+        <div class="row" *ngIf="listGridView=='Grid'">
+            <div class="col-sm-3 m-t-sm pb-10" *ngFor="let item of itemList; let i=index">
+                <div class="card">
+                    <div class="card-header card_hed_bg p-xs bg_light_blue font-16">
+                        <span class="text-white">{{item.itemId | titlecase}} - {{item.itemName | titlecase}}
+                        </span>
+                    </div>
+                    <div class="card-body p-xs bg-blue-hexa">
+                        <span>
+                            <td class="text-warning">Project Name</td> : <td class="font-13">
+                                {{item?.projectId?.projectName}}
+                            </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">Item Quantity</td> : <td class="font-13">{{item.itemQuantity}}</td>
+                        </span><br>
+                        <div class="font-12 h-40 m-t-xxs"> {{item.comments | slice:0:110}}... </div>
+                    </div>
+                    <div class="card-footer" style="padding: 7px 7px 1px 8px;">
+                        <div class="m-t-n-xs">
+                            <span>
+                                <td class="font-bold">Created</td> : <td>{{item.created|date}}</td><br>
+                                <td class="font-bold">Updated</td> : <td>{{item.updated|date}}</td>
+                            </span>
+                            <div class="btn-group btn-group-sm pull-right m-t-n">
+                                <button type="button" class="btn btn-success mr-1" data-toggle="tooltip" title="Edit"
+                                    data-placement="bottom" (click)="editItemModal(item,template)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-success mr-1" data-toggle="tooltip" title="Delete"
+                                    data-placement="bottom" (click)="deleteItemModal(item,template1)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button type="button" class="btn btn-success mr-1" data-toggle="tooltip" title="Details"
+                                    data-placement="bottom" (click)="itemInfoModal(item,infoTemplate)">
+                                    <i class="fa fa-info-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="listGridView=='List'">
+            <div class="col-lg-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ItemId</th>
+                            <th>Item Name</th>
+                            <th>Item Quantity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of itemList">
+                            <td>{{item.itemId}}</td>
+                            <td>{{item.itemName}}</td>
+                            <td>{{item.itemQuantity}}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-info mr-1 pull-right"
+                                        (click)="editItemModal(item,template)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info mr-1" (click)="deleteItemModal(item,template1)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info mr-1"
+                                        (click)="itemInfoModal(item,infoTemplate)">
+                                        <i class="fa fa-info-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 text-center mt-5" *ngIf="getErrorMsg||itemList?.length==0">
+        {{getErrorMsg}}
+    </div>
+</div>
+
+<!-- Create And Update Item Modal Popup -->
+<ng-template #template>
+    <div class="modal-header">
+        <h4 *ngIf="!updateItemData?._id" class="modal-title pull-left font-bold text-black font-16">Create Item
+        </h4>
+        <h4 *ngIf="updateItemData?._id" class="modal-title pull-left font-bold text-black font-16">Update Item
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="card-body p-xs">
+                <form [formGroup]="itemForm">
+                    <div class="form-group">
+                        <label for="projectName">Project Name *</label>
+                        <div class="">
+                            <ng-select [items]="getProjectData" [searchable]="true" bindLabel="projectName"
+                                formControlName="projectName" placeholder="No Project selected"
+                                (search)="searchProject($event)">
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemId">ItemId *</label>
+                        <input type="text" formControlName="itemId" class="form-control" placeholder="Enter item id"
+                            [ngClass]="{ 'is-invalid': ((submitted && itemForm.get('itemId').errors) || itemForm.get('itemId').errors && (itemForm.get('itemId').touched || itemForm.get('itemId').dirty)) }" />
+                        <div class="invalid-feedback"
+                            *ngIf="(submitted && itemForm.get('itemId').errors) ||(itemForm.get('itemId').errors && (itemForm.get('itemId').touched || itemForm.get('itemId').dirty))">
+                            <span *ngIf="itemForm.get('itemId').errors.required">
+                                ItemId is required
+                            </span>
+                            <span *ngIf="itemForm.get('itemId').errors.minlength">
+                                ItemId must be at least 3 characters long.
+                            </span>
+                            <span *ngIf="itemForm.get('itemId').errors.maxlength">
+                                ItemId cannot exceed 10 characters.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemName">Item Name *</label>
+                        <input type="text" class="form-control" formControlName="itemName" placeholder="Enter item name"
+                            value=""
+                            [ngClass]="{ 'is-invalid': ((submitted && itemForm.get('itemName').errors) || itemForm.get('itemName').errors && (itemForm.get('itemName').touched || itemForm.get('itemName').dirty)) }" />
+                        <div class="invalid-feedback"
+                            *ngIf="(submitted && itemForm.get('itemName').errors) || ((itemForm.get('itemName').errors && (itemForm.get('itemName').touched) || itemForm.get('itemName').dirty))">
+                            <span *ngIf="itemForm.get('itemName').errors?.required">
+                                Item Name is required
+                            </span>
+                            <span *ngIf="itemForm.get('itemName').errors?.minlength">
+                                Item Name must be at least 5 characters long.
+                            </span>
+                            <span *ngIf="itemForm.get('itemName').errors?.maxlength">
+                                Item Name cannot exceed 50 characters.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemQuantity">Item Quantity *</label>
+                        <input type="text" class="form-control" formControlName="itemQuantity"
+                            placeholder="Enter item quantity ..." value=""
+                            [ngClass]="{ 'is-invalid': ((submitted && itemForm.get('itemQuantity').errors) || itemForm.get('itemQuantity').errors && (itemForm.get('itemQuantity').touched || itemForm.get('itemQuantity').dirty)) }" />
+                        <div class="invalid-feedback"
+                            *ngIf="((submitted && itemForm.get('itemQuantity').errors) || itemForm.get('itemQuantity').errors && (itemForm.get('itemQuantity').touched || itemForm.get('itemQuantity').dirty))">
+                            <span *ngIf="itemForm.get('itemQuantity').errors?.required">
+                                Item Quantity is required
+                            </span>
+                            <span *ngIf="itemForm.get('itemQuantity').errors?.minlength">
+                                Item Quantity must be at least 3 characters long.
+                            </span>
+                            <span *ngIf="itemForm.get('itemQuantity').errors?.maxlength">
+                                Item Quantity cannot exceed 50 characters.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemQuantity">Comments *</label>
+                        <textarea class="form-control" id="validationTextarea" formControlName="comments"
+                            placeholder="Please comments here something..."
+                            [ngClass]="{ 'is-invalid': ((submitted && itemForm.get('comments').errors) || itemForm.get('comments').errors && (itemForm.get('comments').touched || itemForm.get('comments').dirty)) }"></textarea>
+                        <div class="invalid-feedback"
+                            *ngIf="(submitted && itemForm.get('comments').errors) ||(itemForm.get('comments').errors && (itemForm.get('comments').touched || itemForm.get('comments').dirty))">
+                            <span *ngIf="itemForm.get('comments').errors.required">
+                                Comment is required
+                            </span>
+                            <span *ngIf="itemForm.get('comments').errors.minlength">
+                                Comment must be at least 5 characters long.
+                            </span>
+                            <span *ngIf="itemForm.get('comments').errors?.maxlength">
+                                Comment cannot exceed 150 characters.
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row pull-center">
+            <span class="text-warning text-center"> {{itemError}} </span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" *ngIf="!updateItemData?._id"
+            (click)="createItem()">Create</button>
+        <button type="button" class="btn btn-success" *ngIf="updateItemData?._id" (click)="updateItem()">Update</button>
+        <button type="button" class="btn btn-info" (click)="closeModal()">Close</button>
+    </div>
+</ng-template>
+
+
+<!-- Delete Item Modal Popup -->
+<ng-template #template1>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16">Delete Item</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <h3> Are you sure want to delete the <span class="text-warning"> {{deleteItemData.itemName}} </span>
+            Project ? </h3>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="deleteItem(deleteItemData)">Yes</button>
+        <button type="button" class="btn btn-info" (click)="closeModal()">No</button>
+    </div>
+</ng-template>
+
+<!-- Item Details Modal Popup -->
+<ng-template #infoTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-bold text-black font-16">Item Details</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body bg-blue-hexa">
+        <div class="">
+            <div>
+                <span class="text-warning">Item Id</span> : <small class="font-13">{{itemDetailsData?.itemId}}</small>
+                <span class="pull-right">
+                    <span class="text-warning">Item Quantity</span> :
+                    <small class="font-13">{{itemDetailsData?.itemQuantity}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-warning">Item Name</span> :
+                <small class="font-13">{{itemDetailsData?.itemName}}</small>
+            </div>
+            <div class="font-12 m-t-xs"> {{itemDetailsData.comments}}</div>
+        </div>
+
+        <h4 class="m-t-md">Project Details</h4>
+        <hr class="m-t-n-xs">
+
+        <div class="">
+            <div>
+                <span class="text-success">Project Id</span> :
+                <small class="font-13">{{itemDetailsData?.projectId?.projectId}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Project Name</span> :
+                    <small class="font-13">{{itemDetailsData?.projectId?.projectName}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Manager Id</span> :
+                <small class="font-13">{{itemDetailsData?.projectId?.managerId}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Manager Name</span> :
+                    <small class="font-13">{{itemDetailsData?.projectId?.managerName}}</small>
+                </span>
+            </div>
+            <div>
+                <span class="text-success">Customer Id</span> :
+                <small class="font-13">{{itemDetailsData?.projectId?.custodianId}}</small>
+                <span class="pull-right">
+                    <span class="text-success">Customer Name</span> :
+                    <small class="font-13">{{itemDetailsData?.projectId?.custodianName}}</small>
+                </span>
+            </div>
+            <div class="font-12 h-40 m-t-sm"> {{itemDetailsData?.projectId?.comments}}</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-info" (click)="closeModal()">Close</button>
+    </div>
+</ng-template>

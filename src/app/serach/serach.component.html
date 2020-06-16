@@ -1,0 +1,137 @@
+<div class="row">
+    <div class="col-lg-12 border bg-light text-dark h-55">
+        <div class="card-body">
+            <div class="row m-t-n-xs">
+                <div class="col-sm-11">
+                    <h4 class="text-primary">Search</h4>
+                </div>
+                <div class="col-sm-1 m-t-n-xs">
+                    <div class="input-group pull-right">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-info mr-1" (click)="refresh()">
+                                <i class="fa fa-refresh"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="loadingBar">
+        <div class="loading">Loading&#8230;</div>
+    </div>
+
+    <div class="col-lg-12 wrapper">
+        <div class="row p-xs mt-2">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="search_label" for="project">Search Project</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" #searchInput [(ngModel)]="projectSearchText"
+                            (keyup.enter)="onProjectSearchEvent(searchInput.value)"
+                            placeholder="Search Project By Name or Project id...">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary mr-1" type="button"
+                                (click)="onProjectSearchEvent(searchInput.value)">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="search_label" for="item">Search Item</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" #itemSearchInput [(ngModel)]="itemSearchText"
+                            (keyup.enter)="onItemSearchEvent(itemSearchInput.value)"
+                            placeholder="Search Project By Name ...">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary mr-1" type="button"
+                                (click)="onItemSearchEvent(itemSearchInput.value)">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row wrapper-content" *ngIf="projectList?.length">
+            <div class="col-sm-3" *ngFor="let project of projectList; let i=index">
+                <div class="card">
+                    <div class="card-header card_hed_bg p-xs bg_light_blue font-16">
+                        <span class="text-white">{{project.projectId | titlecase}} - {{project.projectName | titlecase}}
+                        </span>
+                    </div>
+                    <div class="card-body p-xs bg-blue-hexa">
+                        <span>
+                            <td class="text-warning">ManagerId</td> :
+                            <td class="font-13"> {{project?.managerId}} </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">Manager Name</td> :
+                            <td class="font-13"> {{project?.managerName}} </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">CustodianId</td> :
+                            <td class="font-13"> {{project?.custodianId}} </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">Custodian Name</td> :
+                            <td class="font-13"> {{project?.custodianName}} </td>
+                        </span><br>
+                        <div class="font-12 h-40 m-t-xxs"> {{project.comments | slice:0:110}}... </div>
+                    </div>
+                    <div class="card-footer bg_card_footer_project p-xs">
+                        <div class="">
+                            <span>
+                                <td class="font-bold">Created</td> : <td>{{project.created|date}}</td>
+                            </span>
+                            <span>
+                                <td class="font-bold">Updated</td> : <td>{{project.updated|date}}</td>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row wrapper-content" *ngIf="itemList?.length">
+            <div class="col-sm-3 m-t-sm pb-10" *ngFor="let item of itemList; let i=index">
+                <div class="card">
+                    <div class="card-header card_hed_bg p-xs bg_light_blue font-16">
+                        <span class="text-white">{{item.itemId | titlecase}} - {{item.itemName | titlecase}}
+                        </span>
+                    </div>
+                    <div class="card-body p-xs bg-blue-hexa">
+                        <span>
+                            <td class="text-warning">Project Name</td> : <td class="font-13">
+                                {{item?.projectId?.projectName}}
+                            </td>
+                        </span><br>
+                        <span>
+                            <td class="text-warning">Item Quantity</td> : <td class="font-13">{{item.itemQuantity}}</td>
+                        </span><br>
+                        <div class="font-12 h-40 m-t-xxs"> {{item.comments | slice:0:110}}... </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="m-t-n-xs">
+                            <span>
+                                <td class="font-bold">Created</td> : <td>{{item.created|date}}</td>
+                            </span>
+                            <div class="btn-group btn-group-sm pull-right">
+                                <td class="font-bold">Updated</td> : <td>{{item.updated|date}}</td>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row error" *ngIf="errorMsg">
+        <span class="text-center">{{errorMsg}} </span>
+    </div>
+</div>

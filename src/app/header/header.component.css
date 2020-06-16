@@ -1,0 +1,64 @@
+.bg-theme-colored {
+    background-color: #926dde !important;
+}
+.text-white{
+    color: white !important ;
+}
+
+.nav_style {
+    font-size: 16px;
+    font-weight: 600 !important;
+}
+
+.navbar {
+    color: #fff;
+    background: #926dde;
+    padding: 5px 16px;
+    border-radius: 0;
+    border: none;
+    box-shadow: 0 0 4px rgba(0,0,0,.1);
+}
+
+/* ------------------------ */
+
+.block {
+    text-align: center;
+    vertical-align: middle;
+}
+.circle {
+    background: red;
+    border-radius: 70px;
+    color: white;
+    height: 70px;
+    font-weight: bold;
+    width: 70px;
+    display: table;
+    margin: 7px auto;
+    font-size: 36px;
+    margin-left: 52px;
+}
+.circle p {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.userName_text {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.menu {
+    position: absolute;
+    right: 0px;
+}
+
+.profile_view{
+    background-color: red;
+    height: 40px;
+    width: 40px;
+    border-radius: 64px;
+    font-size: 24px;
+    display: inline-block;
+    text-align: center;
+}

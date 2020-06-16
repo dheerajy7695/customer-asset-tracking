@@ -1,0 +1,301 @@
+<!-- Login Form -->
+<div id="logreg-forms" *ngIf="formView=='Login'">
+    <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="loginUser()">
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
+        <div class="social-login">
+            <button class="btn facebook-btn social-btn mr-1" type="button">
+                <span> <i class="fa fa-facebook-f"></i> Sign in with Facebook </span>
+            </button>
+            <button class="btn google-btn social-btn" type="button">
+                <span> <i class="fa fa-google-plus"></i> Sign in with Google+ </span>
+            </button>
+        </div>
+        <p style="text-align:center"> OR </p>
+
+        <div class="form-group">
+            <input type="text" class="form-control" formControlName="username" id="username" placeholder="Email address"
+                autocomplete="off">
+            <span class="text-green font-size-small"
+                *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched">
+                Username is required
+            </span>
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" formControlName="password" id="pwd" placeholder="Password"
+                autocomplete="off">
+            <span class="text-green font-size-small"
+                *ngIf="loginForm.controls['password'].hasError('required') && loginForm.controls['password'].touched">
+                Password is required
+            </span>
+        </div>
+        <button class="btn btn-success btn-block" type="submit"><i class="fa fa-sign-in"></i> Sign in</button>
+        <div *ngIf="invalidLogin" class="text-green m-1">
+            <span class="font-size-small">Invalid credentials.</span>
+        </div>
+        <a id="forgot_pswd" (click)="showHideRegisterForm('Reset')">Forgot password?</a>
+        <hr>
+        <button class="btn btn-primary btn-block" type="button" id="btn-signup"
+            (click)="showHideRegisterForm('Register')">
+            <i class="fa fa-user-plus"></i> Sign up
+        </button>
+    </form>
+</div>
+
+<div id="logreg-forms" *ngIf="formView=='Reset'">
+    <form [formGroup]="resetForm" class="form-signin">
+        <div class="">
+            <h3 class="text-center"><i class="fa fa-lock fa-4x"></i></h3>
+            <h2 class="text-center">Forgot Password?</h2>
+            <p class="text-center">You can reset your password here.</p>
+
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="glyphicon glyphicon-envelope color-blue"></i>
+                </span>
+                <input id="email" name="email" formControlName="email" placeholder="email address" class="form-control"
+                    type="email">
+            </div>
+            <div class="text-green font-size-small"
+                *ngIf="((emailSubmit && resetForm.get('email').errors) || resetForm.get('email').errors && (resetForm.get('email').touched || resetForm.get('email').dirty))">
+                <span *ngIf="resetForm.get('email').errors?.required">
+                    Email is required
+                </span>
+                <span *ngIf="resetForm.get('email').errors?.email">
+                    Email must be a valid email address
+                </span>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit" (click)="resetPwdNext()">Next</button>
+            <a class="text-center" id="cancel_reset" (click)="showHideRegisterForm('Login')">
+                <i class="fa fa-arrow-circle-o-left"></i> Back
+            </a>
+        </div>
+    </form>
+</div>
+
+<div id="logreg-forms" *ngIf="formView=='UpdatePWDView'">
+    <form [formGroup]="updatePwdForm" class="form-signin">
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Reset Password</h1>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-group">
+                <input formControlName="password" id="password" [type]="passHide ? 'password' : 'text'"
+                    class="form-control pwd p-1">
+                <span class="input-group-btn">
+                    <button class="btn btn-default reveal" type="button" (click)="showHidePwd()">
+                        <i class="fa fa-eye" aria-hidden="true" *ngIf="passHide"></i>
+                        <i class="fa fa-eye-slash" aria-hidden="true" *ngIf="!passHide"></i>
+                    </button>
+                </span>
+            </div>
+            <div *ngIf="pwd.password.touched && pwd.password.invalid" class="text-green font-size-small">
+                <span *ngIf="pwd.password.errors.required">Password is required.</span>
+                <span *ngIf="updatePwdForm.get('password').errors?.minlength">
+                    Password must be at least 5 characters long.
+                </span>
+                <span *ngIf="updatePwdForm.get('password').errors?.maxlength">
+                    Password cannot exceed 25 characters.
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <div class="input-group">
+                <input formControlName="confirm_password" id="confirm_password"
+                    [type]="cofmPassHide ? 'password' : 'text'" class="form-control pwd p-1">
+                <span class="input-group-btn">
+                    <button class="btn btn-default reveal" type="button" (click)="showHideCnfmPwd()">
+                        <i class="fa fa-eye" aria-hidden="true" *ngIf="cofmPassHide"></i>
+                        <i class="fa fa-eye-slash" aria-hidden="true" *ngIf="!cofmPassHide"></i>
+                    </button>
+                </span>
+            </div>
+            <div *ngIf="pwd.confirm_password.touched && pwd.confirm_password.invalid"
+                class="text-green font-size-small">
+                <span *ngIf="pwd.confirm_password.errors.required">Password is required.</span>
+                <span *ngIf="pwd.confirm_password.errors.confirmedValidator">Password and Confirm Password must be
+                    match.</span>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" (click)="updatePwd()">Reset</button>
+        <a class="text-center" id="cancel_reset" (click)="showHideRegisterForm('Reset')">
+            <i class="fa fa-arrow-circle-o-left"> </i> Back
+        </a>
+    </form>
+</div>
+
+<!-- Register Form -->
+<div class="container register" *ngIf="formView=='Register'">
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt="" />
+            <h3>Welcome</h3>
+            <p>You are 30 seconds away from this organization!</p>
+            <input type="submit" name="" value="Login" (click)="showHideRegisterForm('Login')" /><br />
+        </div>
+        <div class="col-md-9 register-right">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h3 class="register-heading">Sign Up</h3>
+                    <form [formGroup]="addUserForm" (ngSubmit)="registerUserClick()">
+                        <div class="row register-form">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" formControlName="firstName" class="form-control"
+                                        placeholder="First Name *"
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('firstName').errors) || addUserForm.get('firstName').errors && (addUserForm.get('firstName').touched || addUserForm.get('firstName').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && addUserForm.get('firstName').errors) ||(addUserForm.get('firstName').errors && (addUserForm.get('firstName').touched || addUserForm.get('firstName').dirty))">
+                                        <span *ngIf="addUserForm.get('firstName').errors.required">
+                                            First Name is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('firstName').errors.minlength">
+                                            Your First Name must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="addUserForm.get('firstName').errors.maxlength">
+                                            Your First Name cannot exceed 25 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="lastName"
+                                        placeholder="Last Name *" value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('lastName').errors) || addUserForm.get('lastName').errors && (addUserForm.get('lastName').touched || addUserForm.get('lastName').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="(submitted && addUserForm.get('lastName').errors) || ((addUserForm.get('lastName').errors && (addUserForm.get('lastName').touched) || addUserForm.get('lastName').dirty))">
+                                        <span *ngIf="addUserForm.get('lastName').errors?.required">
+                                            Last Name is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('lastName').errors?.minlength">
+                                            Your Last Name must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="addUserForm.get('lastName').errors?.maxlength">
+                                            Your Last Name cannot exceed 25 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="username"
+                                        placeholder="Username *" value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('username').errors) || addUserForm.get('username').errors && (addUserForm.get('username').touched || addUserForm.get('username').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && addUserForm.get('username').errors) || addUserForm.get('username').errors && (addUserForm.get('username').touched || addUserForm.get('username').dirty))">
+                                        <span *ngIf="addUserForm.get('username').errors?.required">
+                                            Username is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('username').errors?.minlength">
+                                            Username must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="addUserForm.get('username').errors?.maxlength">
+                                            Username cannot exceed 15 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="password"
+                                        placeholder="Password *" value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('password').errors) || addUserForm.get('password').errors && (addUserForm.get('password').touched || addUserForm.get('password').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && addUserForm.get('password').errors) || addUserForm.get('password').errors && (addUserForm.get('password').touched || addUserForm.get('password').dirty))">
+                                        <span *ngIf="addUserForm.get('password').errors?.required">
+                                            Password is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('password').errors?.minlength">
+                                            Password must be at least 5 characters long.
+                                        </span>
+                                        <span *ngIf="addUserForm.get('password').errors?.maxlength">
+                                            Password cannot exceed 25 characters.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="confirmPassword"
+                                        placeholder="Confirm Password *" value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('confirmPassword').errors) || addUserForm.get('confirmPassword').errors && (addUserForm.get('confirmPassword').touched || addUserForm.get('confirmPassword').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && addUserForm.get('confirmPassword').errors) || addUserForm.get('confirmPassword').errors && (addUserForm.get('confirmPassword').touched || addUserForm.get('confirmPassword').dirty))">
+                                        <span *ngIf="addUserForm.get('confirmPassword').errors?.required">
+                                            Confirm Password is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('confirmPassword').errors?.mustMatch">Passwords
+                                            must match</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="email"
+                                        placeholder="Your Email *" value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('email').errors) || addUserForm.get('email').errors && (addUserForm.get('email').touched || addUserForm.get('email').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && addUserForm.get('email').errors) || addUserForm.get('email').errors && (addUserForm.get('email').touched || addUserForm.get('email').dirty))">
+                                        <span *ngIf="addUserForm.get('email').errors?.required">
+                                            Email is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('email').errors?.email">
+                                            Email must be a valid email address
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="phone"
+                                        placeholder="Your Phone *" value="" maxlength="10"
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('phone').errors) || addUserForm.get('phone').errors && (addUserForm.get('phone').touched || addUserForm.get('phone').dirty)) }" />
+                                    <div class=" invalid-feedback"
+                                        *ngIf="((submitted && addUserForm.get('phone').errors) || addUserForm.get('phone').errors && (addUserForm.get('phone').touched || addUserForm.get('phone').dirty))">
+                                        <span *ngIf="addUserForm.get('phone').errors?.required"> Phone is required
+                                        </span>
+                                        <span *ngIf="addUserForm.get('phone').errors?.pattern"> Only Numbers are allowed
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" formControlName="securityKey" id="secQutn"
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('securityKey').errors) || addUserForm.get('securityKey').errors && (addUserForm.get('securityKey').touched || addUserForm.get('securityKey').dirty)) }">
+                                        <option value="" [selected]=true [disabled]="true">Please select your Sequrity
+                                            Question</option>
+                                        <option [value]="secQutn.name" *ngFor="let secQutn of securityQuestion">
+                                            {{secQutn.name}}
+                                        </option>
+                                    </select>
+                                    <div class="error-feed" *ngIf="submitted && addUserForm.get('securityKey').errors">
+                                        <span *ngIf="addUserForm.get('securityKey').errors.required">
+                                            Field is required
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" formControlName="securityValue"
+                                        placeholder="Enter Your Answer *" value=""
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('securityValue').errors) || addUserForm.get('securityValue').errors && (addUserForm.get('securityValue').touched || addUserForm.get('securityValue').dirty)) }" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="((submitted && addUserForm.get('securityValue').errors) || addUserForm.get('securityValue').errors && (addUserForm.get('securityValue').touched || addUserForm.get('securityValue').dirty))">
+                                        <span *ngIf="addUserForm.get('securityValue').errors?.required">
+                                            Field is required
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" formControlName="gender" id="data"
+                                        [ngClass]="{ 'is-invalid': ((submitted && addUserForm.get('gender').errors) || addUserForm.get('gender').errors && (addUserForm.get('gender').touched || addUserForm.get('gender').dirty)) }">
+                                        <option value="" [selected]=true [disabled]="true">Please select your Gender
+                                        </option>
+                                        <option [value]="data.name" *ngFor="let data of genderData">{{data.name}}
+                                        </option>
+                                    </select>
+                                    <div class="error-feed" *ngIf="submitted && addUserForm.get('gender').errors">
+                                        <span *ngIf="addUserForm.get('gender').errors.required">
+                                            Gender is required
+                                        </span>
+                                    </div>
+                                </div>
+                                <input type="submit" class="btnRegister" value="Sign Up" />
+                            </div>
+                            <div class="error-feed mt-1 ml-3" *ngIf="getUserError"> {{getUserError?.message}} </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
