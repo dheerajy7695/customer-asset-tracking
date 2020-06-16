@@ -28,10 +28,6 @@ export class UserService {
     return this.http.post(`${this.baseUrl}loginUser`, reqPayload).pipe(catchError(this.handleError));
   }
 
-  // getUsers() {
-  //   return this.http.get(`${this.baseUrl}getUser`);
-  // }
-
   getUsers(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}getUser`);
   }
