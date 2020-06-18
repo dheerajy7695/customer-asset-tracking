@@ -44,8 +44,8 @@ export class UserComponent implements OnInit {
   createUserForm() {
     this.userForm = this.formBuilder.group({
       username: ['', Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(25)])],
-      password: ['', Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(25)])],
-      confirmPassword: ['', Validators.required],
+      password: ['', Validators.compose([Validators.required, Validators.minLength(5)])],
+      confirmPassword: [''],
       email: ['', [Validators.required, Validators.email]],
       firstName: ['', Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(25)])],
       lastName: ['', Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(25)])],
@@ -68,9 +68,7 @@ export class UserComponent implements OnInit {
     this.userService.getUsers().subscribe((userRespose) => {
       this.loginUser = localStorage.getItem("currentUser");
       // _.remove(userRespose, function (e) { return e.username == loginUser });
-
       this.userList = userRespose;
-      console.log(userRespose);
     }, (error) => {
       this.userError = error;
     })
@@ -86,12 +84,12 @@ export class UserComponent implements OnInit {
     this.userForm.patchValue(userData);
   }
 
-  UpdateUser() {
+  updateUser() {
     this.submitted = false;
     this.userError = "";
     if (this.userForm.invalid) {
       this.submitted = true;
-      return
+      return;
     } else {
       let updatePayload = this.userForm.value;
       updatePayload._id = this.updateUserData._id;
